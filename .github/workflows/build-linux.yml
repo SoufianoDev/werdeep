@@ -1,0 +1,55 @@
+name: Build Linux
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y upx-ucl
+
+      - name: Build libft
+        run: make -C src/wrapper/libft
+
+      - name: Compile py2c wrapper
+        run: gcc src/wrapper/py2c.c -Isrc -Lsrc/wrapper/libft -lft -o py2c
+
+      - name: Build binary
+        run: ./py2c assembleRelease --target=linux
+
+      - name: Verify project structure
+        run: ./py2c verify --allow-built --verbose
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: werdeep-linux-x64
+          path: |
+            dist/werdeep-linux-x64
+            dist/libpython3.11.so.1.0
+          retention-days: 30
+
+      - name: Test binary
+        run: |
+          chmod +x dist/werdeep-linux-x64
+          ./dist/werdeep-linux-x64 --help
+          ./dist/werdeep-linux-x64 "https://example.com" --depth 1 --max-pages 1 --timeout 30
+
+      - name: Get binary size
+        run: ls -lh dist/werdeep-linux-x64

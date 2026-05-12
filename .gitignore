@@ -1,0 +1,84 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+
+# Cython generated
+src/werdeep/engine/*.c
+src/werdeep/engine/*.html
+src/werdeep/engine/*.so
+src/werdeep/external/html_to_markdown/*.c
+src/werdeep/external/html_to_markdown/*.html
+src/werdeep/external/html_to_markdown/*.so
+
+# Build output (all generated — source is src/wrapper/py2c.c)
+build/
+bin/
+
+# Dist output
+dist/
+*.egg-info/
+
+# Virtual environments
+venv/
+.venv/
+.build-venv/
+
+# libft build artifacts
+src/wrapper/libft/*.o
+src/wrapper/libft/*.a
+
+# Compiled py2c binary (source is src/wrapper/py2c.c)
+py2c
+py2c.exe
+werdeep-linux-*
+werdeep-windows-*
+werdeep-macos-*
+
+# Tool caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Node / OpenCode
+node_modules/
+bun.lockb
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Reports (temporary)
+reports/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary
+*.tmp
+*.bak
+*.manifest
+*.spec
+
+
+chats/*
+test-results/*
+tests/*
+specs/*
+playground-specs/*
+docs/*
+opencode.json
+.opencode/*
+.specify/context/*
+.specify/memory/*

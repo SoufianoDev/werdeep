@@ -1,0 +1,96 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., 1.0.1)'
+        required: true
+        type: string
+      prerelease:
+        description: 'Mark as pre-release'
+        required: false
+        default: false
+        type: boolean
+      draft:
+        description: 'Create as draft'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  build-linux:
+    uses: ./.github/workflows/build-linux.yml
+
+  build-windows:
+    uses: ./.github/workflows/build-windows.yml
+
+  build-macos:
+    uses: ./.github/workflows/build-macos.yml
+
+  release:
+    needs: [build-linux, build-windows, build-macos]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: binaries
+
+      - name: Prepare release files
+        run: |
+          mkdir -p dist
+          find binaries -name "werdeep-*" -type f -exec cp {} dist/ \;
+          find binaries -name "libpython*" -type f -exec cp {} dist/ \;
+          find binaries -name "python*.dll" -type f -exec cp {} dist/ \;
+          ls -la dist/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ inputs.version }}
+          name: WeRDeep v${{ inputs.version }}
+          body: |
+            ## WeRDeep v${{ inputs.version }}
+
+            ### Downloads
+
+            | Platform | Architecture | Download |
+            |----------|-------------|----------|
+            | Linux | x64 | `werdeep-linux-x64` + `libpython3.11.so.1.0` |
+            | Windows | x64 | `werdeep-windows-x64.exe` + `python311.dll` |
+            | macOS | x64 (Intel) | `werdeep-macos-x64` + `libpython3.11.dylib` |
+            | macOS | ARM64 (Apple Silicon) | `werdeep-macos-arm64` + `libpython3.11.dylib` |
+
+            ### Usage
+
+            The binary and its libpython shared library must be in the same directory.
+
+            ```bash
+            # Linux/macOS
+            chmod +x werdeep-*
+            ./werdeep-linux-x64 "https://example.com" --depth 3
+
+            # Windows
+            .\werdeep-windows-x64.exe "https://example.com" --depth 3
+            ```
+
+            See [README.md](README.md) for full documentation.
+          files: dist/*
+          draft: ${{ inputs.draft }}
+          prerelease: ${{ inputs.prerelease }}
+          generate_release_notes: true
+
+      - name: Summarize release
+        run: |
+          echo "Release v${{ inputs.version }} created successfully!"
+          echo ""
+          echo "Draft: ${{ inputs.draft }}"
+          echo "Pre-release: ${{ inputs.prerelease }}"
+          echo ""
+          echo "Binaries:"
+          ls -lh dist/

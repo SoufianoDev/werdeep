@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel", "cython>=3.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "werdeep"
+version = "1.0.0"
+description = "Deep web search and research tool for OpenCode"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [
+    {name = "SoufianoDev"}
+]
+keywords = ["web-crawler", "search", "research", "opencode", "scrapy"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Cython",
+    "Topic :: Internet :: WWW/HTTP :: Indexing/Search",
+]
+
+dependencies = [
+    "scrapy>=2.11.0",
+    "jsonschema>=4.0.0",
+    "beautifulsoup4>=4.12.0",
+    "lxml>=4.9.0",
+    "requests>=2.28.0",
+    "certifi>=2023.7.22",
+    "ddgs>=9.13.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "ruff>=0.1.0",
+]
+
+[project.scripts]
+werdeep = "werdeep.cli.main:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["werdeep", "werdeep.engine", "werdeep.cli", "werdeep.config", "werdeep.external", "werdeep.external.html_to_markdown", "werdeep.search", "werdeep.search.engines"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+addopts = "-v --cov=src/werdeep --cov-report=term-missing --cov-fail-under=65"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "D"]
+ignore = ["D100", "D104"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"

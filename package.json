@@ -1,0 +1,29 @@
+{
+  "name": "werdeep-tool",
+  "version": "1.0.0",
+  "description": "OpenCode tool integration for WeRDeep",
+  "type": "module",
+  "main": "dist/opencode/tool/werdeep.js",
+  "types": "dist/opencode/tool/werdeep.d.ts",
+  "scripts": {
+    "build": "bun build src/opencode/tool/werdeep.ts --outdir dist --target bun",
+    "typecheck": "tsc --noEmit",
+    "dev": "bun run build --watch"
+  },
+  "dependencies": {
+    "@opencode-ai/plugin": "^1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "bun-types": "^1.0.0"
+  },
+  "keywords": [
+    "opencode",
+    "tool",
+    "web-crawler",
+    "search",
+    "research"
+  ],
+  "author": "SoufianoDev",
+  "license": "MIT"
+}

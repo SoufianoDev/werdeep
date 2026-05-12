@@ -1,0 +1,56 @@
+name: Build Windows
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install UPX
+        run: |
+          Invoke-WebRequest -Uri "https://github.com/upx/upx/releases/download/v4.2.2/upx-4.2.2-win64.zip" -OutFile "upx.zip"
+          Expand-Archive -Path "upx.zip" -DestinationPath "."
+          $upxPath = (Get-ChildItem -Path "." -Filter "upx.exe" -Recurse).DirectoryName
+          echo "$upxPath" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: Build libft
+        run: make -C src/wrapper/libft
+
+      - name: Compile py2c wrapper
+        run: gcc src/wrapper/py2c.c -Isrc -Lsrc/wrapper/libft -lft -o py2c.exe
+
+      - name: Build binary
+        run: .\py2c.exe assembleRelease --target=windows
+
+      - name: Verify project structure
+        run: .\py2c.exe verify --allow-built --verbose
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: werdeep-windows-x64
+          path: |
+            dist\werdeep-windows-x64.exe
+            dist\python311.dll
+          retention-days: 30
+
+      - name: Test binary
+        run: |
+          .\dist\werdeep-windows-x64.exe --help
+          .\dist\werdeep-windows-x64.exe "https://example.com" --depth 1 --max-pages 1 --timeout 30
+
+      - name: Get binary size
+        run: (Get-Item .\dist\werdeep-windows-x64.exe).Length / 1MB

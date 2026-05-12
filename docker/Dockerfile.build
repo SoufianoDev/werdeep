@@ -1,0 +1,31 @@
+FROM python:3.11-slim-bookworm
+
+LABEL maintainer="SoufianoDev"
+LABEL description="Build environment for WeRDeep standalone binaries"
+LABEL version="1.0.0"
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    gcc \
+    g++ \
+    patchelf \
+    git \
+    upx-ucl \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip install --no-cache-dir \
+    cython==3.0.10 \
+    ruff>=0.3.0 \
+    mypy>=1.8.0 \
+    pytest>=7.0.0 \
+    pytest-cov>=4.0.0
+
+WORKDIR /build
+
+COPY . /build/
+
+RUN pip install --no-cache-dir -e /build/
+RUN make -C src/wrapper/libft
+RUN gcc src/wrapper/py2c.c -Isrc -Lsrc/wrapper/libft -lft -o py2c
+
+CMD ["./py2c", "assembleRelease", "--target=linux"]
