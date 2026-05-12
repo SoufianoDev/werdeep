@@ -1,4 +1,4 @@
-![WeRDeep Logo](docs/assets/logo.png)
+<img src="docs/assets/logo.png" alt="WeRDeep Logo" />
 
 # WeRDeep
 
@@ -85,4 +85,3 @@ WeRDeep enforces strict, immutable dataclasses for all I/O operations to ensure 
 *   **Release Engineering**: `py2c assembleRelease` supports targeting `linux`, `windows`, `macos`, and `macos-arm64`.
 *   **Residency**: Stateless execution model. All temporary data is confined to the session's memory or current working directory.
 *   **Compliance**: Built-in `robots.txt` enforcement with configurable whitelist overrides.
-

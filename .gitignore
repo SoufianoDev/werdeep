@@ -77,7 +77,7 @@ test-results/*
 tests/*
 specs/*
 playground-specs/*
-docs/*
+docs/*.md
 opencode.json
 .opencode/*
 .specify/*
