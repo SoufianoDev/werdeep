@@ -1,3 +1,5 @@
+![WeRDeep Logo](docs/assets/logo.png)
+
 # WeRDeep
 
 High-performance deep web search and research engine optimized for AI agent orchestration. WeRDeep is architected as a multi-tier system with a native orchestration layer, a Python/Cython application core, and a TypeScript integration bridge.

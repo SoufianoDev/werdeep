@@ -80,5 +80,4 @@ playground-specs/*
 docs/*
 opencode.json
 .opencode/*
-.specify/context/*
-.specify/memory/*
+.specify/*
